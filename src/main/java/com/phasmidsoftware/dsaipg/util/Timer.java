@@ -64,10 +64,29 @@ public class Timer {
      * @return the average milliseconds per repetition.
      */
     public <T, U> double repeat(int n, boolean warmup, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
-        // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
-         return 0;
-        // END SOLUTION
+        if (warmup){
+            for(int i=0; i<n; i++) {
+                T input = preFunction == null ? supplier.get() : preFunction.apply(supplier.get());
+                U output = function.apply(input);
+                lap();
+                if (postFunction != null) postFunction.accept(output);
+            }
+            pause();
+        } else {
+            pause();
+            for(int i=0; i<n; i++) {
+                T input = preFunction == null ? supplier.get() : preFunction.apply(supplier.get());
+                resume();
+                U output = function.apply(input);
+                pauseAndLap();
+                if (postFunction != null) postFunction.accept(output);
+            }
+        }
+        final double result = meanLapTime();
+        resume();
+        return result;
     }
+    
 
     /**
      * Updates the status display by printing progress markers or a decrement value based on the input parameters.
@@ -239,9 +258,7 @@ public class Timer {
      * @return the number of ticks for the system clock. Currently defined as nano time.
      */
     private static long getClock() {
-        // TO BE IMPLEMENTED 
-         return 0;
-        // END SOLUTION
+        return System.nanoTime();
     }
 
     /**
@@ -252,9 +269,7 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        // TO BE IMPLEMENTED 
-         return 0;
-        // END SOLUTION
+        return ((double)ticks)/1000000.0;
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);
