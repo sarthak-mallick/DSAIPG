@@ -9,7 +9,7 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("ConstantConditions")
-public class PriorityQueue4Ary4AryTest {
+public class PriorityQueue4AryTest {
 
     @Test
     public void testUnordered1() {
