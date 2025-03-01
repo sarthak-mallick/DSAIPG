@@ -19,102 +19,71 @@ public class PriorityQueueTimerTest {
     @Test
     public void timePriorityQueue() {
         Timer timer = new Timer();
-        Integer[] intsToGive = generateRandomArray(-10000, 10000, 16000);
         for (int j = 0; j < 2; j++) {
             boolean floyd = j==0 ? false : true;
             String message = j==0 ? "Not Floyd" : "Floyd";
 
-            final double binaryWarmUpMeanTime = timer.repeat(20,
-                    true, () -> null,
-                    arr -> {
-                        PriorityQueue<Integer> pq = new PriorityQueue<>(4095, true,
-                                Comparator.comparing(Integer::intValue), floyd);
-                        for (int i = 0; i < 16000; i++) {
-                            pq.give(intsToGive[i]);
-                        }
-                        for (int i = 0; i < 4000; i++) {
-                            try {
-                                pq.take();
-                            } catch (PQException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return pq;
-                    },
-                    null,
-                    null);
+            for(int k=0; k<=5; k++) {
+                Integer[] intsToGive = generateRandomArray(-100000, 100000, 160000);
+                int heapSize = (int) (5125 * Math.pow(2, k));
+                double binaryMeanTime = this.meanTimeBinary(heapSize, timer, floyd, intsToGive, true);
+                binaryMeanTime = this.meanTimeBinary(heapSize, timer, floyd, intsToGive, false);
+                System.out.println(message + " heap size=" + heapSize + " binary heap time=" + binaryMeanTime);
+            }
 
-            final double binaryMeanTime = timer.repeat(20,
-                    false, () -> null,
-                    arr -> {
-                        PriorityQueue<Integer> pq2 = new PriorityQueue<>(4095, true,
-                                Comparator.comparing(Integer::intValue), floyd);
-                        for (int i = 0; i < 16000; i++) {
-                            pq2.give(intsToGive[i]);
-                        }
-                        Integer highestSpilled = Integer.MIN_VALUE;
-                        for (int i = 0; i < 4000; i++) {
-                            try {
-                                Integer result = pq2.take();
-                                if (result > highestSpilled) {
-                                    highestSpilled = result;
-                                }
-                            } catch (PQException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        System.out.print("Highest Priority Spilled=" + highestSpilled + " ");
-                        return pq2;
-                    },
-                    null,
-                    null);
-            System.out.println(message + " binary heap time=" + binaryMeanTime);
-
-            final double quarternaryWarmUpMeanTime = timer.repeat(20,
-            true, () -> null,
-            arr -> {
-                PriorityQueue4Ary<Integer> pq = new PriorityQueue4Ary<>(4095, true,
-                        Comparator.comparing(Integer::intValue), floyd);
-                for (int i = 0; i < 16000; i++) {
-                    pq.give(intsToGive[i]);
-                }
-                for (int i = 0; i < 4000; i++) {
-                    try {
-                        pq.take();
-                    } catch (PQException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return pq;
-            },
-            null,
-            null);
-
-            final double quarternaryMeanTime = timer.repeat(20,
-                    false, () -> null,
-                    arr -> {
-                        PriorityQueue4Ary<Integer> pq4 = new PriorityQueue4Ary<>(4095, true,
-                                Comparator.comparing(Integer::intValue), floyd);
-                        for (int i = 0; i < 16000; i++) {
-                            pq4.give(intsToGive[i]);
-                        }
-                        Integer highestSpilled = Integer.MIN_VALUE;
-                        for (int i = 0; i < 4000; i++) {
-                            try {
-                                Integer result = pq4.take();
-                                if (result > highestSpilled) {
-                                    highestSpilled = result;
-                                }
-                            } catch (PQException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        System.out.print("Highest Priority Spilled=" + highestSpilled + " ");
-                        return pq4;
-                    },
-                    null,
-                    null);
-            System.out.println(message + " quarternary heap time=" + quarternaryMeanTime);
+            for(int k=0; k<=5; k++) {
+                Integer[] intsToGive = generateRandomArray(-100000, 100000, 160000);
+                int heapSize = (int) (5125 * Math.pow(2, k));
+                double quarternaryMeanTime = this.meanTime4Ary(heapSize, timer, floyd, intsToGive, true);
+                quarternaryMeanTime = this.meanTime4Ary(heapSize, timer, floyd, intsToGive, false);
+                System.out.println(message + " heap size=" + heapSize + " quarternary heap time=" + quarternaryMeanTime);
+            }
         }
+    }
+
+    private double meanTimeBinary (int heapSize, Timer timer, boolean floyd, Integer[] intsToGive, boolean warmup) {
+        final double meanTime = timer.repeat(20,
+        warmup, () -> null,
+        arr -> {
+            PriorityQueue<Integer> pq2 = new PriorityQueue<>(heapSize, true,
+                    Comparator.comparing(Integer::intValue), floyd);
+            for (int i = 1; i <= 160000; i++) {
+                try {
+                    // inter-leaved insertion and deletion
+                    if (i % 4 != 0) pq2.give(intsToGive[i]);
+                    else pq2.take();
+                } catch (PQException e) {
+                    e.printStackTrace();
+                }
+            }
+            return pq2;
+        },
+        null,
+        null);
+
+        return meanTime;
+    }
+
+    private double meanTime4Ary (int heapSize, Timer timer, boolean floyd, Integer[] intsToGive, boolean warmup) {
+        final double meanTime = timer.repeat(20,
+        warmup, () -> null,
+        arr -> {
+            PriorityQueue4Ary<Integer> pq4 = new PriorityQueue4Ary<>(heapSize, true,
+                    Comparator.comparing(Integer::intValue), floyd);
+            for (int i = 1; i <= 160000; i++) {
+                try {
+                    // inter-leaved insertion and deletion
+                    if (i % 4 != 0) pq4.give(intsToGive[i]);
+                    else pq4.take();
+                } catch (PQException e) {
+                    e.printStackTrace();
+                }
+            }
+            return pq4;
+        },
+        null,
+        null);
+
+        return meanTime;
     }
 }

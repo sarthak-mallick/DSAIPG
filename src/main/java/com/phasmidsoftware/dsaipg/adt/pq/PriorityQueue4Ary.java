@@ -66,7 +66,7 @@ public class PriorityQueue4Ary<K> implements Iterable<K> {
     }
 
     void snake(@SuppressWarnings("SameParameterValue") int k) {
-        swimUp(doHeapify(k, (a, b) -> !unordered(a, b)));
+        swimUp(doHeapify(k, (a, b) -> false));
     }
 
     void swimUp(int k) {
