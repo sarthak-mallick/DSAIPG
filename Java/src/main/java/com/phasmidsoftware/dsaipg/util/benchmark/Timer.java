@@ -91,6 +91,7 @@ public class Timer {
         resume();
         return result;
     }
+    
 
     /**
      * Stop this Timer and return the mean lap time in milliseconds.

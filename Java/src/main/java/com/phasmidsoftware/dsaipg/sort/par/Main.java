@@ -14,8 +14,10 @@ import java.util.concurrent.ForkJoinPool;
 public class Main {
 
     /**
-     * The main method serves as the entry point for the program. It processes command-line arguments,
-     * configures sorting parameters, performs parallel sorting on a random array, measures execution time,
+     * The main method serves as the entry point for the program. It processes
+     * command-line arguments,
+     * configures sorting parameters, performs parallel sorting on a random array,
+     * measures execution time,
      * and writes the performance results to a CSV file.
      *
      * @param args command-line arguments used for configuring program execution.
@@ -24,65 +26,69 @@ public class Main {
         processArgs(args);
         System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
         Random random = new Random();
-        int[] array = new int[2000000];
-        Collection<Long> timeList = new ArrayList<>();
-        for (int j = 50; j < 100; j++) {
-            ParSort.cutoff = 10000 * (j + 1);
-            // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-            long time;
-            long startTime = System.currentTimeMillis();
-            for (int t = 0; t < 10; t++) {
-                for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-                ParSort.sort(array, 0, array.length);
-            }
-            long endTime = System.currentTimeMillis();
-            time = (endTime - startTime);
-            timeList.add(time);
-
-
-            System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
-
-        }
+        int cutoffGap = 10000;
+        int arraySize = 2000000;
+        int[] array = new int[arraySize];
         try {
-            FileOutputStream fis = new FileOutputStream("./src/result.csv");
-            OutputStreamWriter isr = new OutputStreamWriter(fis);
-            BufferedWriter bw = new BufferedWriter(isr);
-            int j = 0;
-            for (long i : timeList) {
-                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
-                j++;
-                bw.write(content);
-                bw.flush();
+            for (int poolSize = 2; poolSize <= 6; poolSize += 2) {
+                FileOutputStream fis = new FileOutputStream("result" + poolSize + ".csv");
+                OutputStreamWriter isr = new OutputStreamWriter(fis);
+                BufferedWriter bw = new BufferedWriter(isr);
+                for (int j = 10; j < 160; j += 3) {
+                    ParSort.cutoff = cutoffGap * (j + 1);
+                    ParSort.customPool = new ForkJoinPool(poolSize);
+                    for (int i = 0; i < array.length; i++)
+                        array[i] = random.nextInt(10000000);
+                    long time;
+                    long startTime = System.currentTimeMillis();
+                    for (int t = 0; t < 10; t++) {
+                        ParSort.sort(array, 0, array.length);
+                    }
+                    long endTime = System.currentTimeMillis();
+                    time = (endTime - startTime);
+                    System.out.println("cutoff：" + (ParSort.cutoff) + "\t10 times Time:" + time + "ms");
+                    String content = (double) ParSort.cutoff / arraySize + "," + (double) time + "\n";
+                    bw.write(content);
+                    bw.flush();
+                }
+                bw.close();
             }
-            bw.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Processes the command-line arguments by iterating through the provided array of arguments.
-     * Each argument is checked for specific prefixes (e.g., "-" symbols), and arguments with such prefixes
-     * are further handled using {@link #processArg(String[])}. The method continuously modifies the arguments array
+     * Processes the command-line arguments by iterating through the provided array
+     * of arguments.
+     * Each argument is checked for specific prefixes (e.g., "-" symbols), and
+     * arguments with such prefixes
+     * are further handled using {@link #processArg(String[])}. The method
+     * continuously modifies the arguments array
      * by removing processed elements.
      *
-     * @param args an array of strings representing command-line arguments to be processed.
-     *             Each argument can include options, flags, or parameters that configure the program's behavior.
+     * @param args an array of strings representing command-line arguments to be
+     *             processed.
+     *             Each argument can include options, flags, or parameters that
+     *             configure the program's behavior.
      */
     private static void processArgs(String[] args) {
         String[] xs = args;
         while (xs.length > 0)
-            if (xs[0].startsWith("-")) xs = processArg(xs);
+            if (xs[0].startsWith("-"))
+                xs = processArg(xs);
     }
 
     /**
-     * Processes a given array of strings, extracting a subset of elements and applying a command
+     * Processes a given array of strings, extracting a subset of elements and
+     * applying a command
      * processing operation on the first two elements of the input array.
      *
-     * @param xs the input array of strings where the first two elements are used for command processing
+     * @param xs the input array of strings where the first two elements are used
+     *           for command processing
      *           and the remaining elements are returned as the result.
-     * @return an array of strings containing the elements of the input array excluding the first two.
+     * @return an array of strings containing the elements of the input array
+     *         excluding the first two.
      */
     private static String[] processArg(String[] xs) {
         String[] result = new String[0];
@@ -92,20 +98,23 @@ public class Main {
     }
 
     /**
-     * Processes a command and performs an associated action based on the given inputs.
+     * Processes a command and performs an associated action based on the given
+     * inputs.
      *
      * @param x the command identifier, which specifies the operation to perform.
-     *          Supported values: "N" for setting configuration and "P" for retrieving
+     *          Supported values: "N" for setting configuration and "P" for
+     *          retrieving
      *          the common pool parallelism level.
      * @param y the value associated with the command. For "N", this represents the
      *          configuration value to be set.
      */
     private static void processCommand(String x, String y) {
-        if (x.equalsIgnoreCase("N")) setConfig(x, Integer.parseInt(y));
+        if (x.equalsIgnoreCase("N"))
+            setConfig(x, Integer.parseInt(y));
         else
-            // TODO sort this out
-            if (x.equalsIgnoreCase("P")) //noinspection ResultOfMethodCallIgnored
-                ForkJoinPool.getCommonPoolParallelism();
+        // TODO sort this out
+        if (x.equalsIgnoreCase("P")) // noinspection ResultOfMethodCallIgnored
+            ForkJoinPool.getCommonPoolParallelism();
     }
 
     /**
