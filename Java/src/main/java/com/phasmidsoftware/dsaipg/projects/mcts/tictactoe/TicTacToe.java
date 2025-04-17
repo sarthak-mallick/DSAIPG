@@ -48,6 +48,7 @@ public class TicTacToe implements Game<TicTacToe> {
         State<TicTacToe> state = start();
         int player = opener();
         while (!state.isTerminal()) {
+            System.out.println(state.toString());
             state = state.next(state.chooseMove(player));
             player = 1 - player;
         }
@@ -228,7 +229,7 @@ public class TicTacToe implements Game<TicTacToe> {
         @Override
         public String toString() {
             return "TicTacToe{\n" +
-                    position +
+                    position.render() +
                     "\n}";
         }
 
