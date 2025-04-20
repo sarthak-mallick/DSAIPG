@@ -10,52 +10,10 @@ import java.util.*;
  * Class which models the game of Reversi.
 */
 public class Reversi implements Game<Reversi> {
-    /**
-    * Main program to run a random Reversi game.
-    *
-    * @param args command-line arguments.
-    */
-    public static void main(String[] args) {
-        State<Reversi> state = new Reversi().runGame();
-        if (state.winner().isPresent()) {
-            System.out.println("Reversi: winner is: " + (state.winner().get() == WHITE ? "White" : "Black"));
-        } else {
-            System.out.println("Reversi: draw");
-        }
-    }
 
     public static final int BLACK = 0;
     public static final int WHITE = 1;
     public static final int EMPTY = -1;
-
-    /**
-    * Run a Reversi game.
-    *
-    * @return the terminal State.
-    */
-    State<Reversi> runGame() {
-        State<Reversi> state = start();
-        int player = opener();
-        boolean gameOver = false;
-        
-        while (!gameOver) {
-            System.out.println(state.toString());
-            Collection<Move<Reversi>> possibleMoves = state.moves(player);
-            
-            if (possibleMoves.isEmpty()) {
-                player = 1-player; // Skip to opponent if current player has no valid moves
-                possibleMoves = state.moves(player);
-                if (possibleMoves.isEmpty())
-                    gameOver = true; // If other player also has no valid moves, game is over
-            } else {
-                state = state.next(state.chooseMove(player));
-                player = 1-player;
-                if (((ReversiState)state).position().full())
-                    gameOver = true;
-            }
-        }
-        return state;
-    }
 
     /**
      * This method determines the opening player (Black goes first in Reversi).
