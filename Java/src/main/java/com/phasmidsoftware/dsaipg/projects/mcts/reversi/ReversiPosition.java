@@ -130,7 +130,7 @@ public class ReversiPosition {
             int r = row+dir[0];
 
             // Check if step is outside board or doesn't belong to opponent
-            if (r<0 || c<0 || r>=gridSize || c>=gridSize || grid[r][c] != opponent)
+            if (r<0 || c<0 || r>=gridSize || c>=gridSize || grid[r][c]!=opponent)
                 continue;
             c = c+dir[1]; 
             r = r+dir[0];
@@ -235,9 +235,9 @@ public class ReversiPosition {
         };
     }
 
-    private final int[][] grid;
+    protected final int[][] grid;
     final int last;
-    private final int blackCount;
-    private final int whiteCount;
-    private final static int gridSize = 6;
+    protected final int blackCount;
+    protected final int whiteCount;
+    protected final static int gridSize = 8;
 }
