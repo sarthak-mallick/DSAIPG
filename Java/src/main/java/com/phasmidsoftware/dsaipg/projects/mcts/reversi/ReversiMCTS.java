@@ -8,10 +8,13 @@ import java.util.*;
 
 public class ReversiMCTS {
     public static void main(String[] args) {
+        long startTime = System.nanoTime();
         State<Reversi> initialState = new Reversi().start();
         ReversiNode initialRoot = new ReversiNode(initialState);
         ReversiMCTS mcts = new ReversiMCTS(initialRoot);
         mcts.runGame();
+        long endTime = System.nanoTime();
+        System.out.println("Time in ms: " + (endTime-startTime)/1000000);
     }
 
     public ReversiMCTS(ReversiNode root) {
@@ -241,5 +244,5 @@ public class ReversiMCTS {
     private final Random random = new Random();
     private final double explorationConstant = 1.0; // Ratio of exploration to exploitation
     private final int iterationsPerMove = 5000; // Number of iterations to run simulation
-    private final int maxSimulationDepth = 12; // Depth to explore before predicting winner
+    private final int maxSimulationDepth = 20; // Depth to explore before predicting winner
 }

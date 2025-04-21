@@ -1,11 +1,8 @@
 # DSAIPG
-## Introduction and Provenance
-Companion repository to:
-"Data Structures, Algorithms, and Invariants--A Practical Guide"
-by Robin Hillyard, College of Engineering, Northeastern University, Boston, MA, USA.
-Published by Cognella.
 
-This is version 1-2 (second revision of the first edition).
+## Instructions to Run
+
+We use a fork of the existing DSAIPG repository so it’s still the same Maven project. Using an IDE like IntelliJ IDEA, or VS Code, you can also run the program after cloning. After Maven downloads all the dependencies, run `MCTS.java` for TicTacToe or `ReversiMCTS.java` for Reversi. Similarly, you can run MCTSTest.java, ReversiMCTSTest.java or others for test cases. All new files are in sub-directories of `Java/src/main/java/com/phasmidsoftware/dsaipg/projects/mcts` while the new test cases are in sub-directories of `Java/src/test/java/com/phasmidsoftware/dsaipg/projects/mcts`
 
 ## Installation
 There are two major directories within this repository:
@@ -19,27 +16,6 @@ then you might want to fork it instead.
 The Java repository contains a Maven project (see the `pom.xnl` file in the top level).
 Ideally, you will use an IDE that is suited to Maven projects.
 I recommend IntelliJ IDEA for Java work.
-
-## Navigation
-The simplest way to find code is just to use the `Navigate/Class` menu.
-It is good at recognizing what you're looking for.
-However, note that the first character of all classes is upper case (and you will need to search thus).
-
-Exercises and code relating to the various chapters can be found as given below and under the package `com.phasmidsoftware.dsaipg`:
-* Chapters 1 and 2: `misc` and `util`; (if any)
-* Chapters 3 through 6: `adt`;
-* Chapters 7 and 8: `sort` (and `select`);
-* Chapters 9 and 10: `graphs`;
-* Team Project: `projects`.
-
-Other package directories contain other code.
-
-In order to find TODOs, etc. you should use the TODO tool window.
-I recommend adding the following pattern to be recognized as needing attention
-(TODO is already a known pattern):
-* \bTO BE IMPLEMENTED\b.*
-
-This will make it easy to see where you have to write code.
 
 ## Building and Testing (Java)
 If you have cloned (or forked) the repository into IDEA, it should build the Java project
@@ -55,5 +31,3 @@ that you need to replace with functioning code in many places
 
 There are also functional tests in the `src/it/java` directory.
 However, these take significantly longer to run and are really not necessary. 
-
-## Building and Testing (Python)
